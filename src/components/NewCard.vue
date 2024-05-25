@@ -16,7 +16,7 @@
                 <span v-else>
                     <h3 class="font-semibold">{{ property }}</h3>
                     <span v-if="property == 'Modifiers'">
-                        <div v-for="mod in item[property].reverse()">
+                        <div v-for="mod in item[property]">
                             <span class="inline font-bold">• </span>
                             <span v-if="mod.Filter">If <span class="font-semibold">{{ mod.Filter.toLowerCase() }}</span>
                                 &nbsp</span>
