@@ -31,7 +31,7 @@
 import { ItemChanges } from '../composables/changes';
 
 
-const props = defineProps<{
+defineProps<{
     item: ItemChanges
 }>();
 
