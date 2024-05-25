@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col w-full gap-3 p-4 border-4 rounded">
+    <div class="flex flex-col w-full gap-3 p-4 border-4 rounded shadow">
         <div class="flex items-center gap-4 h-fit">
             <img class="w-14" style="image-rendering: pixelated;" :src="base64Image(item.Icon)" alt="item.Name" />
             <div>
@@ -16,9 +16,10 @@
                 <span v-else>
                     <h3 class="font-semibold">{{ property }}</h3>
                     <span v-if="property == 'Modifiers'">
-                        <div v-for="mod in item[property]">
+                        <div v-for="mod in item[property].reverse()">
                             <span class="inline font-bold">• </span>
-                            <span v-if="mod.Filter">If {{ mod.Filter }} &nbsp</span>
+                            <span v-if="mod.Filter">If <span class="font-semibold">{{ mod.Filter.toLowerCase() }}</span>
+                                &nbsp</span>
                             <span v-else>Always applies </span>
                             <span>{{ mod.Modifiers.join(' ,') }}</span>
                         </div>
@@ -47,6 +48,7 @@ function relevantProperties(item: Item): string[] {
         .filter(p => !['Icon', 'ID', 'Deprecated', 'Name', 'Description'].includes(p))
         .filter(p => item[p] !== null && item[p] !== undefined);
 }
+
 
 </script>
 

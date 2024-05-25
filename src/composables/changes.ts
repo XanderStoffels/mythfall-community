@@ -1,9 +1,32 @@
-import { Ability, Item, Weapon, versionData } from "../types";
+import { onMounted, ref, watch } from "vue";
+import { Ability, Item, Weapon } from "../types";
+import { Version, useVersions } from "./versions";
 
 export const useChanges = () => {
-  const mostRecentChanges = async () => {
-    const d1 = await versionData("v0.0.10");
-    const d2 = await versionData("v0.0.11");
+  const { selectedVersionA, selectedVersionB, versionData } = useVersions();
+  const changes = ref<Catalog | null>(null);
+
+  onMounted(async () => {
+    if (selectedVersionA.value != null && selectedVersionB.value != null) {
+      changes.value = await getChanges(
+        selectedVersionA.value,
+        selectedVersionB.value
+      );
+    }
+  });
+
+  watch([selectedVersionA, selectedVersionB], async () => {
+    if (selectedVersionA.value != null && selectedVersionB.value != null) {
+      changes.value = await getChanges(
+        selectedVersionA.value,
+        selectedVersionB.value
+      );
+    }
+  });
+
+  async function getChanges(v1: Version, v2: Version) {
+    const d1 = await versionData(v1);
+    const d2 = await versionData(v2);
 
     const result: Catalog = {
       changedItems: [],
@@ -35,8 +58,9 @@ export const useChanges = () => {
     }
 
     return result;
-  };
-  return { mostRecentChanges };
+  }
+
+  return { getChanges, changes };
 };
 
 export interface Catalog {

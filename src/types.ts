@@ -1,20 +1,4 @@
-export type Version = "v0.0.10" | "v0.0.11";
-
-export async function versionData(version: Version): Promise<Item[]> {
-  if (version === "v0.0.10") {
-    const data = await import("./data/v0.0.10.json");
-    const items = data.Items as Item[];
-    return items;
-  }
-
-  if (version === "v0.0.11") {
-    const data = await import("./data/v0.0.11.json");
-    const items = data.Items as Item[];
-    return items;
-  }
-
-  throw new Error(`Unknown version: ${version}`);
-}
+import { Version } from "./composables/versions";
 
 export interface Item {
   [name: string]: any;

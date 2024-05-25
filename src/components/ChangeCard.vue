@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full p-4 border-4 rounded">
+    <div class="w-full p-4 border-4 rounded shadow">
         <div class="flex items-center gap-4 h-fit">
             <img class="w-14" style="image-rendering: pixelated;" :src="base64Image(item.Icon)" alt="item.Name" />
             <h1 class="text-2xl">{{ item.Name }}</h1>
