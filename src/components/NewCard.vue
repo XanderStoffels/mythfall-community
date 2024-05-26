@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col w-full gap-1 p-4 border-2 rounded shadow border-zinc-500 bg-zinc-100">
+    <div class="flex flex-col w-full gap-1 p-4 border-2 rounded shadow shadow-amber-500 border-amber-500 bg-amber-50">
         <div class="flex items-center gap-4 h-fit">
             <img class="w-14" style="image-rendering: pixelated;" :src="base64Image(item.Icon)" alt="item.Name" />
             <div>
@@ -21,10 +21,32 @@
                         <span>{{ mod.Modifiers.join(' ,') }}.</span>
                     </div>
                 </span>
-                <p v-else>
-                <h3 class="font-semibold">{{ property }}</h3>
-                {{ item[property] }}
-                </p>
+                <span v-else-if="property == 'Weapon'">
+                    <div class="flex flex-col max-w-64">
+                        <table>
+                            <tr>
+                                <td class="font-semibold">Damage</td>
+                                <td>{{ item.Weapon?.Damage }} + ({{ (item.Weapon?.StrengthScaling ?? 0) + 1 }} x STR)</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Attack Speed</td>
+                                <td>{{ item.Weapon?.Rate }} / second</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Projectile count</td>
+                                <td>{{ item.Weapon?.Projectiles }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">Class</td>
+                                <td>{{ item.Weapon?.Class }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </span>
+                <span v-else>
+                    <h3 class="font-semibold">{{ property }}</h3>
+                    {{ item[property] }}
+                </span>
             </div>
         </div>
     </div>
