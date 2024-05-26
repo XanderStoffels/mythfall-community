@@ -73,10 +73,6 @@ function getSlotAndSourceDescription(item: Item): string {
     return `Found in ${item.Source}.`;
 }
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
 
 </script>
 
