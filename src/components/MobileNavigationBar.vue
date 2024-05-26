@@ -1,7 +1,7 @@
 <template>
-    <nav class="w-full h-12 bg-slate-100">
+    <div class="w-full h-12 bg-[#835a42]">
 
-    </nav>
+    </div>
 </template>
 
 <script setup lang="ts">

@@ -18,7 +18,8 @@
         </p>
         <p>
             <a class="font-semibold text-red-800" href="https://mythfall.com/">Play Mythfall now! It's free!</a>
-            There are {{ mythfallStatus?.NumPlayers }} players online right now.
+            There {{ mythfallStatus?.NumPlayers == 1 ? "is" : "are" }} {{ mythfallStatus?.NumPlayers }} players online right
+            now.
         </p>
 
         <hr />
@@ -27,7 +28,6 @@
 
 
     <div class="flex flex-wrap justify-center">
-
         <div class="flex justify-center w-full gap-10 p-4 mt-4">
             <div>
                 <label for="version-a" class="block mb-2 text-sm font-medium text-gray-900">
@@ -60,7 +60,7 @@
             <div v-if="removedItems?.length" class="flex flex-col gap-2">
                 <h1 class="my-4 text-5xl font-light">Removed items</h1>
                 <div v-for="item in removedItems" :key="item.ID">
-                    <h3> {{ item.Name }}</h3>
+                    <RemovedCard :item="item" />
                 </div>
             </div>
 
@@ -72,9 +72,9 @@
                 </div>
             </div>
         </div>
-        <div v-else class="flex flex-col w-full gap-4 p-4 md:w-4/5 xl:w-1/2">
-            <h1 class="text-5xl font-light">No changes</h1>
-            <h2 class="text-2xl font-light">Make sure you have selected two different versions.</h2>
+        <div v-else class="flex flex-col w-full gap-1 px-4 mt-8 text-red-700 md:p-0 md:w-4/5 xl:w-1/2 md:order-2">
+            <h1 class="text-3xl font-light">No changes</h1>
+            <h2 class="text-lg font-light">Make sure you have selected two different versions.</h2>
         </div>
 
         <div class="flex-1"></div>
@@ -92,6 +92,7 @@ import { useVersions, Version } from '../composables/versions';
 import { MythfallStatus, useMythfallStatus } from '../composables/mythfall-status';
 import NewCard from '../components/NewCard.vue';
 import ChangeCard from '../components/ChangeCard.vue';
+import RemovedCard from '../components/RemovedCard.vue';
 
 
 const changedItems: Ref<ItemChanges[] | undefined> = ref([]);
