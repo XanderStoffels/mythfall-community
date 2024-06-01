@@ -23,63 +23,78 @@
         </p>
 
         <hr />
+
+        <div class="flex flex-wrap justify-start">
+            <div class="flex justify-center w-full gap-10 p-4 my-4">
+                <div>
+                    <label for="version-a" class="block mb-2 text-sm font-medium text-gray-900">
+                        Compare version
+                    </label>
+                    <select id="version-a" v-model="selectedVersionA">
+                        <option v-for="version in versionAOptions" :key="version" :value="version">{{ Version[version] }}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label for="version-a" class="block mb-2 text-sm font-medium text-gray-900">
+                        against version
+                    </label>
+                    <select v-model="selectedVersionB">
+                        <option v-for="version in versionBOptions" :key="version" :value="version">{{ Version[version] }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <div v-if="latestPatchNotes?.features.length ?? 0 > 0">
+                    <h3 class="my-4 text-3xl font-light">New features in {{ Version[selectedVersionB!] }}</h3>
+                    <ul class="flex flex-col gap-3">
+                        <li v-for="feature in latestPatchNotes?.features">{{ feature }}</li>
+                    </ul>
+                </div>
+                <div v-if="latestPatchNotes?.fixes.length ?? 0 > 0">
+                    <h3 class="my-4 text-3xl font-light">Fixes in {{ Version[selectedVersionB!] }}</h3>
+                    <ul class="flex flex-col gap-3">
+                        <li v-for="fix in latestPatchNotes?.fixes">{{ fix }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div v-if="areThereChanges()" class="w-full">
+
+                <div v-if="newItems?.length" class="flex flex-col gap-2">
+                    <h1 class="my-4 text-3xl font-light">New items</h1>
+                    <div v-for="item in newItems" :key="item.ID">
+                        <NewCard :item="item" />
+                    </div>
+                </div>
+
+                <div v-if="removedItems?.length" class="flex flex-col gap-2">
+                    <h1 class="my-4 text-3xl font-light">Removed items</h1>
+                    <div v-for="item in removedItems" :key="item.ID">
+                        <RemovedCard :item="item" />
+                    </div>
+                </div>
+
+
+                <div v-if="changedItems?.length" class="flex flex-col gap-2">
+                    <h1 class="my-4 text-3xl font-light">Item changes</h1>
+                    <div v-for="item in changedItems" :key="item.ID">
+                        <ChangeCard :item="item" />
+                    </div>
+                </div>
+            </div>
+            <div v-else class="flex flex-col w-full gap-1 px-4 mt-8 text-red-700 md:p-0 md:w-4/5 xl:w-1/2 md:order-2">
+                <h1 class="text-3xl font-light">No changes</h1>
+                <h2 class="text-lg font-light">Make sure you have selected two different versions.</h2>
+            </div>
+
+            <div class="flex-1"></div>
+        </div>
     </div>
 
-
-
-    <div class="flex flex-wrap justify-center">
-        <div class="flex justify-center w-full gap-10 p-4 mt-4">
-            <div>
-                <label for="version-a" class="block mb-2 text-sm font-medium text-gray-900">
-                    Compare version
-                </label>
-                <select id="version-a" v-model="selectedVersionA">
-                    <option v-for="version in versionAOptions" :key="version" :value="version">{{ Version[version] }}
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label for="version-a" class="block mb-2 text-sm font-medium text-gray-900">
-                    against version
-                </label>
-                <select v-model="selectedVersionB">
-                    <option v-for="version in versionBOptions" :key="version" :value="version">{{ Version[version] }}
-                    </option>
-                </select>
-            </div>
-        </div>
-
-        <div v-if="areThereChanges()" class="flex flex-col w-full gap-4 px-4 md:p-0 md:w-4/5 xl:w-1/2 md:order-2">
-            <div v-if="newItems?.length" class="flex flex-col gap-2">
-                <h1 class="my-4 text-3xl font-light">New items</h1>
-                <div v-for="item in newItems" :key="item.ID">
-                    <NewCard :item="item" />
-                </div>
-            </div>
-
-            <div v-if="removedItems?.length" class="flex flex-col gap-2">
-                <h1 class="my-4 text-5xl font-light">Removed items</h1>
-                <div v-for="item in removedItems" :key="item.ID">
-                    <RemovedCard :item="item" />
-                </div>
-            </div>
-
-
-            <div v-if="changedItems?.length" class="flex flex-col gap-2">
-                <h1 class="my-4 text-5xl font-light">Item changes</h1>
-                <div v-for="item in changedItems" :key="item.ID">
-                    <ChangeCard :item="item" />
-                </div>
-            </div>
-        </div>
-        <div v-else class="flex flex-col w-full gap-1 px-4 mt-8 text-red-700 md:p-0 md:w-4/5 xl:w-1/2 md:order-2">
-            <h1 class="text-3xl font-light">No changes</h1>
-            <h2 class="text-lg font-light">Make sure you have selected two different versions.</h2>
-        </div>
-
-        <div class="flex-1"></div>
-
-
+    <div class="h-12">
 
     </div>
 </template>
@@ -88,7 +103,7 @@
 import { onMounted, ref, Ref, watch } from 'vue'
 import { ItemChanges, useChanges } from '../composables/changes'
 import { Item } from '../types';
-import { useVersions, Version } from '../composables/versions';
+import { UpdateNotes, useVersions, Version } from '../composables/versions';
 import { MythfallStatus, useMythfallStatus } from '../composables/mythfall-status';
 import NewCard from '../components/NewCard.vue';
 import ChangeCard from '../components/ChangeCard.vue';
@@ -98,6 +113,7 @@ import RemovedCard from '../components/RemovedCard.vue';
 const changedItems: Ref<ItemChanges[] | undefined> = ref([]);
 const newItems: Ref<Item[] | undefined> = ref([]);
 const removedItems: Ref<Item[] | undefined> = ref([]);
+const latestPatchNotes = ref<UpdateNotes | undefined>();
 const mythfallStatus = ref<MythfallStatus | undefined>();
 
 const { changes } = useChanges();
@@ -110,9 +126,10 @@ onMounted(async () => {
 });
 
 watch(changes, () => {
-    changedItems.value = changes.value?.changedItems ?? [];
-    newItems.value = changes.value?.newItems ?? [];
-    removedItems.value = changes.value?.removedItems ?? [];
+    changedItems.value = changes.value?.[0].changedItems ?? [];
+    newItems.value = changes.value?.[0].newItems ?? [];
+    removedItems.value = changes.value?.[0].removedItems ?? [];
+    latestPatchNotes.value = changes.value?.[1];
 });
 
 function areThereChanges(): boolean {

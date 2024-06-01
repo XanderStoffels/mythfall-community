@@ -1,10 +1,10 @@
 import { onMounted, ref, watch } from "vue";
 import { Ability, Item, Weapon } from "../types";
-import { Version, useVersions } from "./versions";
+import { UpdateNotes, Version, useVersions } from "./versions";
 
 export const useChanges = () => {
   const { selectedVersionA, selectedVersionB, versionData } = useVersions();
-  const changes = ref<Catalog | null>(null);
+  const changes = ref<[Catalog, UpdateNotes] | null>(null);
 
   onMounted(async () => {
     if (selectedVersionA.value != null && selectedVersionB.value != null) {
@@ -24,17 +24,21 @@ export const useChanges = () => {
     }
   });
 
-  async function getChanges(v1: Version, v2: Version) {
-    const d1 = await versionData(v1);
-    const d2 = await versionData(v2);
+  async function getChanges(
+    v1: Version,
+    v2: Version
+  ): Promise<[Catalog, UpdateNotes]> {
+    const items1 = (await versionData(v1)).items;
+    const v2Data = await versionData(v2);
+    const items2 = v2Data.items;
 
     const result: Catalog = {
       changedItems: [],
       newItems: [],
       removedItems: [],
     };
-    for (const i1 of d1) {
-      const i2 = d2.find((i) => i.ID === i1.ID);
+    for (const i1 of items1) {
+      const i2 = items2.find((i) => i.ID === i1.ID);
       if (!i2) {
         result.removedItems.push(i1);
         continue;
@@ -50,14 +54,14 @@ export const useChanges = () => {
       }
     }
 
-    for (const i2 of d2) {
-      const i1 = d1.find((i) => i.ID === i2.ID);
+    for (const i2 of items2) {
+      const i1 = items1.find((i) => i.ID === i2.ID);
       if (!i1) {
         result.newItems.push(i2);
       }
     }
 
-    return result;
+    return [result, v2Data.updateNotes];
   }
 
   return { getChanges, changes };
